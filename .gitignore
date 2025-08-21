@@ -13,3 +13,6 @@ instance/
 
 # Ignore environment variables
 .env
+
+# Ignore data cache
+.data/

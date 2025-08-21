@@ -1,20 +1,36 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 2em;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 2em; /* Add margin to the bottom of tables */
+    margin-bottom: 2em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 th, td {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
+    padding: 6px 15px;
+    border: 1px solid #ddd;
     text-align: left;
 }
 
 thead {
-    background-color: #f4f4f4;
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef;
 }

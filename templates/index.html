@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 10 Gaining and Losing Stocks</title>
+    <title>Today's Market Movers: Top 25 Gainers & Losers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Top 10 Gaining Stocks (as of {{ last_updated }})</h1>
+    <h1>Today's Market Movers: Top 25 Gainers</h1>
     <table class="gainer">
         <thead>
             <tr>
@@ -16,6 +19,7 @@
                 <th>Price</th>
                 <th>Change</th>
                 <th>Change %</th>
+                <th>Industry Sector</th>
             </tr>
         </thead>
         <tbody>
@@ -26,12 +30,13 @@
                 <td>{{ stock.price }}</td>
                 <td>{{ stock.change }}</td>
                 <td>{{ stock.changesPercentage }}%</td>
+                <td>{{ stock.sector }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <h1>Top 10 Losing Stocks (as of {{ last_updated }})</h1>
+    <h1>Today's Market Movers: Top 25 Losers</h1>
     <table class="loser">
         <thead>
             <tr>
@@ -40,6 +45,7 @@
                 <th>Price</th>
                 <th>Change</th>
                 <th>Change %</th>
+                <th>Industry Sector</th>
             </tr>
         </thead>
         <tbody>
@@ -50,6 +56,7 @@
                 <td>{{ stock.price }}</td>
                 <td>{{ stock.change }}</td>
                 <td>{{ stock.changesPercentage }}%</td>
+                <td>{{ stock.sector }}</td>
             </tr>
             {% endfor %}
         </tbody>
