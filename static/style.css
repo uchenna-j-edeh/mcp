@@ -1,0 +1,20 @@
+body {
+    font-family: sans-serif;
+    margin: 2em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2em; /* Add margin to the bottom of tables */
+}
+
+th, td {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+thead {
+    background-color: #f4f4f4;
+}

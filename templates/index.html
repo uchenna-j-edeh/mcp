@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 10 Gaining and Losing Stocks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Top 10 Gaining Stocks (as of {{ last_updated }})</h1>
+    <table class="gainer">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Company Name</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>Change %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in gainers %}
+            <tr style="background-color: {{ stock.color }};">
+                <td>{{ stock.symbol }}</td>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.price }}</td>
+                <td>{{ stock.change }}</td>
+                <td>{{ stock.changesPercentage }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Top 10 Losing Stocks (as of {{ last_updated }})</h1>
+    <table class="loser">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Company Name</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>Change %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in losers %}
+            <tr style="background-color: {{ stock.color }};">
+                <td>{{ stock.symbol }}</td>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.price }}</td>
+                <td>{{ stock.change }}</td>
+                <td>{{ stock.changesPercentage }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Ignore Gemini settings
+.gemini/
+
+# Ignore virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore instance folder
+instance/
+
+# Ignore environment variables
+.env
