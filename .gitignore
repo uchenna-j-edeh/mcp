@@ -16,3 +16,6 @@ instance/
 
 # Ignore data cache
 .data/
+
+# Ignore log files
+*.log
