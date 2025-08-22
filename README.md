@@ -2,9 +2,30 @@
 
 This is a Flask application that displays daily stock market snapshots.
 
-## Running in Production (Ubuntu Server)
+## Automated Setup
 
-These instructions will guide you through deploying the application on an Ubuntu server in a production environment.
+For a fast and easy setup, you can use the provided setup script. This script will automate the process of creating a virtual environment, installing dependencies, and creating the necessary directories and files.
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/uchenna-j-edeh/mcp.git
+    cd mcp
+    ```
+
+2.  **Run the setup script:**
+
+    ```bash
+    ./setup.sh
+    ```
+
+3.  **Edit the `.env` file:**
+
+    The setup script will create a `.env` file in the project root directory. You will need to edit this file to add your database connection string and your Financial Modeling Prep API key.
+
+## Manual Setup (Ubuntu Server)
+
+If you prefer to set up the application manually, you can follow these instructions.
 
 ### 1. Prerequisites
 
@@ -46,29 +67,7 @@ Before you begin, you will need:
     *   `DATABASE_URL`: The connection string for your PostgreSQL database.
     *   `FMP_API_KEY`: Your API key for the Financial Modeling Prep API.
 
-    Here are a few ways to set these variables:
-
-    **a) For Development: `.env` file**
-
-    You can create a `.env` file in the project root directory:
-
-    ```
-    DATABASE_URL="postgresql://your_user:your_password@localhost/stock_app_db"
-    FMP_API_KEY="YOUR_API_KEY"
-    ```
-
-    To load these variables, you can install `python-dotenv` (`pip install python-dotenv`) and add the following to the top of `app.py`:
-
-    ```python
-    from dotenv import load_dotenv
-    load_dotenv()
-    ```
-
-    **Important:** Add the `.env` file to your `.gitignore` file to avoid committing secrets to your repository.
-
-    **b) For Production: Systemd `EnvironmentFile`**
-
-    When running the application as a systemd service, you can specify an `EnvironmentFile` in the service definition. This file should contain the environment variables in the same format as the `.env` file.
+    You can create a `.env` file in the project root directory with these variables. See the `.env.example` file for a template.
 
 2.  **Create the Log Directory:**
 
