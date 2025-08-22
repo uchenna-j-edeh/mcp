@@ -9,6 +9,9 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.exc import IntegrityError
 import pytz
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
