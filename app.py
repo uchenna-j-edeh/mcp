@@ -1,5 +1,7 @@
 import os
 import json
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime, timedelta, date, time
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, func, inspect
@@ -9,6 +11,24 @@ import pytz
 import requests
 
 app = Flask(__name__)
+
+# --- Logging Setup ---
+LOG_DIR = '/var/log/mcp-server-gemini-cli'
+if not os.path.exists(LOG_DIR):
+    try:
+        os.makedirs(LOG_DIR)
+    except OSError as e:
+        app.logger.error(f"Error creating log directory {LOG_DIR}: {e}")
+
+log_file = os.path.join(LOG_DIR, 'app.log')
+file_handler = RotatingFileHandler(log_file, maxBytes=1024 * 1024, backupCount=5) # 1 MB per file, 5 backups
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+))
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+# --- End Logging Setup ---
 
 # SQLAlchemy Setup
 DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://your_user:your_password@localhost/stock_app_db')
@@ -69,7 +89,7 @@ def index():
         snapshot_dates = [d[0] for d in snapshot_dates]
         return render_template('index.html', snapshot_dates=snapshot_dates)
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        app.logger.error(f"An unexpected error occurred in index route: {e}")
         return "An unexpected error occurred.", 500
     finally:
         session.close()
@@ -99,7 +119,7 @@ def snapshot_details(snapshot_date):
 
         return render_template('snapshot_details.html', gainers=gainers, losers=losers, snapshot_date=snapshot_date)
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        app.logger.error(f"An unexpected error occurred in snapshot_details route: {e}")
         return "An unexpected error occurred.", 500
     finally:
         session.close()
@@ -120,13 +140,13 @@ def check_and_fetch_snapshots():
         snapshot_for_today_exists = session.query(Snapshot).filter(func.date(Snapshot.snapshot_timestamp) == today).first() is not None
 
         if not snapshot_for_today_exists and current_est_time >= refresh_time_today_est:
-            print(f"It's after 3 PM EST and no snapshot for {today} exists. Fetching new data...")
+            app.logger.info(f"It's after 3 PM EST and no snapshot for {today} exists. Fetching new data...")
             fetch_and_store_snapshots()
         else:
-            print("Snapshot for today already exists or it's not yet 3 PM EST.")
+            app.logger.info("Snapshot for today already exists or it's not yet 3 PM EST.")
 
     except Exception as e:
-        print(f"An error occurred in check_and_fetch_snapshots: {e}")
+        app.logger.error(f"An error occurred in check_and_fetch_snapshots: {e}")
     finally:
         session.close()
 
@@ -180,17 +200,17 @@ def fetch_and_store_snapshots():
             session.add(new_snapshot)
 
         session.commit()
-        print(f"Successfully fetched and stored snapshots for {snapshot_time}")
+        app.logger.info(f"Successfully fetched and stored snapshots for {snapshot_time}")
 
     except requests.exceptions.RequestException as e:
         session.rollback()
-        print(f"Error fetching data from FMP API: {e}")
+        app.logger.error(f"Error fetching data from FMP API: {e}")
     except IntegrityError:
         session.rollback()
-        print("IntegrityError: Data likely already exists for this timestamp.")
+        app.logger.warning("IntegrityError: Data likely already exists for this timestamp.")
     except Exception as e:
         session.rollback()
-        print(f"An unexpected error occurred during snapshot fetching: {e}")
+        app.logger.error(f"An unexpected error occurred during snapshot fetching: {e}")
     finally:
         session.close()
 
@@ -204,8 +224,8 @@ if __name__ == '__main__':
 
     # Create database tables if they don't exist
     if not inspect(engine).has_table('snapshots'):
-        print("Creating database tables...")
+        app.logger.info("Creating database tables...")
         Base.metadata.create_all(engine)
-        print("Database tables created.")
+        app.logger.info("Database tables created.")
 
     app.run(host=args.host, port=args.port, debug=True)
