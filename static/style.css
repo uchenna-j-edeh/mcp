@@ -6,7 +6,12 @@ body {
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #2c3e50; /* A slightly darker, more impactful color */
+    font-family: 'Roboto', sans-serif; /* Ensure Roboto is applied */
+    font-size: 2.5em; /* Larger font size */
+    font-weight: 700; /* Bold */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 1em; /* Add some space below the title */
 }
 
 table {
