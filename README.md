@@ -24,7 +24,14 @@ Before you begin, you will need:
     cd mcp
     ```
 
-2.  **Install the required Python packages:**
+2.  **Create and activate a virtual environment:**
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3.  **Install the required Python packages:**
 
     ```bash
     pip install -r requirements.txt
@@ -34,14 +41,34 @@ Before you begin, you will need:
 
 1.  **Set Environment Variables:**
 
-    You will need to set the following environment variables. A good way to do this is to create a `.env` file in the project root directory:
+    The application requires the following environment variables to be set:
+
+    *   `DATABASE_URL`: The connection string for your PostgreSQL database.
+    *   `FMP_API_KEY`: Your API key for the Financial Modeling Prep API.
+
+    Here are a few ways to set these variables:
+
+    **a) For Development: `.env` file**
+
+    You can create a `.env` file in the project root directory:
 
     ```
     DATABASE_URL="postgresql://your_user:your_password@localhost/stock_app_db"
     FMP_API_KEY="YOUR_API_KEY"
     ```
 
-    You can then load these environment variables using a tool like `python-dotenv` or by sourcing the file before running the application.
+    To load these variables, you can install `python-dotenv` (`pip install python-dotenv`) and add the following to the top of `app.py`:
+
+    ```python
+    from dotenv import load_dotenv
+    load_dotenv()
+    ```
+
+    **Important:** Add the `.env` file to your `.gitignore` file to avoid committing secrets to your repository.
+
+    **b) For Production: Systemd `EnvironmentFile`**
+
+    When running the application as a systemd service, you can specify an `EnvironmentFile` in the service definition. This file should contain the environment variables in the same format as the `.env` file.
 
 2.  **Create the Log Directory:**
 
@@ -98,7 +125,7 @@ To ensure the application starts automatically on boot and is managed properly, 
     WantedBy=multi-user.target
     ```
 
-    **Note:** Make sure to replace `<your_username>` with your actual username and adjust the paths as necessary.
+    **Note:** Make sure to replace `<your_username>` with your actual username and adjust the paths as necessary. The `ExecStart` path should point to the `gunicorn` executable inside your virtual environment.
 
 3.  **Start and enable the service:**
 
