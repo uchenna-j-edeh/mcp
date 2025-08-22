@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapshots for {{ snapshot_date }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Top 25 Gainers for {{ snapshot_date }}</h1>
+    <table class="gainer">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Company Name</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>Change %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in gainers %}
+            <tr style="background-color: {{ stock.color }};">
+                <td><a href="{{ stock.launch_link }}" target="_blank">{{ stock.symbol }}</a></td>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.price }}</td>
+                <td>{{ stock.change }}</td>
+                <td>{{ stock.changes_percentage }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Top 25 Losers for {{ snapshot_date }}</h1>
+    <table class="loser">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Company Name</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>Change %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in losers %}
+            <tr style="background-color: {{ stock.color }};">
+                <td><a href="{{ stock.launch_link }}" target="_blank">{{ stock.symbol }}</a></td>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.price }}</td>
+                <td>{{ stock.change }}</td>
+                <td>{{ stock.changes_percentage }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

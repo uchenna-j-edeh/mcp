@@ -3,63 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Last End of day Market Movers: Top 25 Gainers & Losers</title>
+    <title>Stock Market Snapshots</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Last End of day Market Movers: Top 25 Gainers</h1>
-    <table class="gainer">
-        <thead>
-            <tr>
-                <th>Ticker</th>
-                <th>Company Name</th>
-                <th>Price</th>
-                <th>Change</th>
-                <th>Change %</th>
-                <th>Industry Sector</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stock in gainers %}
-            <tr style="background-color: {{ stock.color }};">
-                <td>{{ stock.symbol }}</td>
-                <td>{{ stock.name }}</td>
-                <td>{{ stock.price }}</td>
-                <td>{{ stock.change }}</td>
-                <td>{{ stock.changesPercentage }}%</td>
-                <td>{{ stock.sector }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h1>Last End of day Market Movers: Top 25 Losers</h1>
-    <table class="loser">
-        <thead>
-            <tr>
-                <th>Ticker</th>
-                <th>Company Name</th>
-                <th>Price</th>
-                <th>Change</th>
-                <th>Change %</th>
-                <th>Industry Sector</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stock in losers %}
-            <tr style="background-color: {{ stock.color }};">
-                <td>{{ stock.symbol }}</td>
-                <td>{{ stock.name }}</td>
-                <td>{{ stock.price }}</td>
-                <td>{{ stock.change }}</td>
-                <td>{{ stock.changesPercentage }}%</td>
-                <td>{{ stock.sector }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1>Available Snapshot Dates</h1>
+    <ul>
+        {% for snapshot_date in snapshot_dates %}
+            <li><a href="{{ url_for('snapshot_details', snapshot_date=snapshot_date) }}">{{ snapshot_date }}</a></li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
