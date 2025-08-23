@@ -167,13 +167,13 @@ def fetch_and_store_snapshots():
         gainers_url = f"https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey={api_key}"
         gainers_response = requests.get(gainers_url)
         gainers_response.raise_for_status()
-        top_25_gainers = gainers_response.json()[:25]
+        top_25_gainers = gainers_response.json()[:100]
 
         # Fetch losers
         losers_url = f"https://financialmodelingprep.com/api/v3/stock_market/losers?apikey={api_key}"
         losers_response = requests.get(losers_url)
         losers_response.raise_for_status()
-        top_25_losers = losers_response.json()[:25]
+        top_25_losers = losers_response.json()[:100]
 
         # Store fetched data
         for stock in top_25_gainers:
