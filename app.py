@@ -1,15 +1,15 @@
 import os
-import json
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime, timedelta, date, time
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, func, inspect
-from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime, date, time
 from sqlalchemy.exc import IntegrityError
 import pytz
 import requests
 from dotenv import load_dotenv
+
+from database import Session, Snapshot, create_tables, func
+import fmp_api
 
 load_dotenv()
 
@@ -32,30 +32,6 @@ file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 # --- End Logging Setup ---
-
-# SQLAlchemy Setup
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://your_user:your_password@localhost/stock_app_db')
-engine = create_engine(DATABASE_URL)
-Base = declarative_base()
-Session = sessionmaker(bind=engine)
-
-# Define the ORM model for the snapshots table
-class Snapshot(Base):
-    __tablename__ = 'snapshots'
-
-    id = Column(Integer, primary_key=True)
-    snapshot_timestamp = Column(DateTime, nullable=False)
-    ingestion_timestamp = Column(DateTime, nullable=False, default=datetime.utcnow)
-    symbol = Column(String(10), nullable=False)
-    name = Column(String(255), nullable=False)
-    price = Column(String(20), nullable=False)
-    change = Column(String(20), nullable=False)
-    changes_percentage = Column(String(20), nullable=False)
-    launch_link = Column(String, nullable=False)
-    is_gainer = Column(Integer, nullable=False)
-
-    def __repr__(self):
-        return f"<Snapshot(id='{self.id}', symbol='{self.symbol}', snapshot_timestamp='{self.snapshot_timestamp}')>"
 
 def get_color(percentage, max_percentage, is_gainer):
     """
@@ -155,7 +131,6 @@ def check_and_fetch_snapshots():
 
 def fetch_and_store_snapshots():
     """Fetches snapshot data from the API and stores it in the database."""
-    api_key = os.environ.get('FMP_API_KEY', 'YOUR_API_KEY')
     session = Session()
     try:
         now_utc = datetime.now(pytz.utc)
@@ -163,20 +138,11 @@ def fetch_and_store_snapshots():
         current_est_time = now_utc.astimezone(us_est)
         snapshot_time = current_est_time
 
-        # Fetch gainers
-        gainers_url = f"https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey={api_key}"
-        gainers_response = requests.get(gainers_url)
-        gainers_response.raise_for_status()
-        top_25_gainers = gainers_response.json()[:100]
-
-        # Fetch losers
-        losers_url = f"https://financialmodelingprep.com/api/v3/stock_market/losers?apikey={api_key}"
-        losers_response = requests.get(losers_url)
-        losers_response.raise_for_status()
-        top_25_losers = losers_response.json()[:100]
+        gainers = fmp_api.get_gainers()
+        losers = fmp_api.get_losers()
 
         # Store fetched data
-        for stock in top_25_gainers:
+        for stock in gainers:
             new_snapshot = Snapshot(
                 snapshot_timestamp=snapshot_time,
                 symbol=stock['symbol'],
@@ -189,7 +155,7 @@ def fetch_and_store_snapshots():
             )
             session.add(new_snapshot)
 
-        for stock in top_25_losers:
+        for stock in losers:
             new_snapshot = Snapshot(
                 snapshot_timestamp=snapshot_time,
                 symbol=stock['symbol'],
@@ -225,10 +191,7 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, default=5000, help='The port of the webserver.')
     args = parser.parse_args()
 
-    # Create database tables if they don't exist
-    if not inspect(engine).has_table('snapshots'):
-        app.logger.info("Creating database tables...")
-        Base.metadata.create_all(engine)
-        app.logger.info("Database tables created.")
+    create_tables()
+    app.logger.info("Database tables created or already exist.")
 
     app.run(host=args.host, port=args.port, debug=True)

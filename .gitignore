@@ -19,3 +19,6 @@ instance/
 
 # Ignore log files
 *.log
+
+
+tests/
